@@ -1,6 +1,7 @@
 /***********************************
 * Author: Jan Franz Palngipang
-* Date: February 19, 2015
+* Date: February 19, 2015 (me3)
+* Update: February 25, 2015 (me4)
 ************************************/
 
 #include <iostream>
@@ -31,6 +32,7 @@ class Point {
         bool operator <= (Point&);
         bool operator >= (Point&);
         Point operator+ (Point&);
+        double operator* (Point&);
 };
 int Point::n = 0;
 
@@ -94,6 +96,14 @@ Point Point::operator+ (Point& p2) {
     return vector;
 }
 
+
+double Point::operator* (Point& p2) {
+    double scalar;
+    scalar = getX() * p2.getX() * cos((abs(getY()-p2.getY())));
+    return scalar;
+}
+
+
 Point::Point () {
     x = 0;
     y = 0;
@@ -151,6 +161,12 @@ int main() {
     cout << p.getX() << endl;
     cout << p.getY() << endl;
 */
+    //test
+    Point p1(1,0.78);
+    Point p2(2,1.57);
+    double test = p1 * p2;
+    cout << test << endl;
+/*
     Point * p_10 = new Point[10];
     int i = 0;
 
@@ -199,7 +215,7 @@ int main() {
     delete[] p_10;
 
 
-
+*/
    //Point p_10[10];
     return 0;
 }
