@@ -23,8 +23,14 @@ class Point {
         double getY();
         void toPolar();
         void toCartesian();
-
-
+        //overloaded operators:
+        bool operator == (Point&);
+        bool operator != (Point&);
+        bool operator < (Point&);
+        bool operator > (Point&);
+        bool operator <= (Point&);
+        bool operator >= (Point&);
+        Point operator+ (Point&);
 };
 int Point::n = 0;
 
@@ -42,6 +48,50 @@ istream &operator >> (istream &is, Point &p) {
     p.setY(stod(temp_y));
 }
 
+bool Point::operator== (Point& p2) {
+    if (getX() == p2.getX())
+        return true;
+    else
+        return false;
+}
+bool Point::operator!= (Point& p2) {
+    if (getX() != p2.getX())
+        return true;
+    else
+        return false;
+}
+bool Point::operator< (Point& p2) {
+    if (getX() < p2.getX())
+        return true;
+    else
+        return false;
+}
+bool Point::operator> (Point& p2) {
+    if (getX() > p2.getX())
+        return true;
+    else
+        return false;
+}
+bool Point::operator<= (Point& p2) {
+    if (getX() <= p2.getX())
+        return true;
+    else
+        return false;
+}
+bool Point::operator>= (Point& p2) {
+    if (getX() >= p2.getX())
+        return true;
+    else
+        return false;
+}
+Point Point::operator+ (Point& p2) {
+    Point vector;
+    this->toCartesian();
+    p2.toCartesian();
+    vector.x = x + p2.getX();
+    vector.y = y + p2.getY();
+    return vector;
+}
 
 Point::Point () {
     x = 0;
@@ -90,6 +140,8 @@ inline double getShortestDistance(double x1, double y1, double x2, double y2) {
     cout << distance << endl;
 
 }
+
+
 int main() {
     /*
     Point p(1,2);
