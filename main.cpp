@@ -90,6 +90,7 @@ Point Point::operator+ (Point& p2) {
     p2.toCartesian();
     vector.x = x + p2.getX();
     vector.y = y + p2.getY();
+    vector.toPolar();
     return vector;
 }
 
