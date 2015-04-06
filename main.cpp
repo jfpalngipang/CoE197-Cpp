@@ -154,19 +154,7 @@ inline double getShortestDistance(double x1, double y1, double x2, double y2) {
 
 
 int main() {
-    /*
-    Point p(1,2);
-    cout << p.getX() << endl;
-    cin >> p;
-    cout << p.getX() << endl;
-    cout << p.getY() << endl;
-*/
-    //test
-    Point p1(1,0.78);
-    Point p2(2,1.57);
-    double test = p1 * p2;
-    cout << test << endl;
-/*
+   
     Point * p_10 = new Point[10];
     int i = 0;
 
@@ -211,12 +199,19 @@ int main() {
         getShortestDistance(p_10[i].getX(), p_10[i].getY(), p_10[j].getX(), p_10[j].getY());
         i++;
     }
+    while (i<9) {
+        j = i+1;
+        getShortestDistance(p_10[i].getX(), p_10[i].getY(), p_10[j].getX(), p_10[j].getY());
+        i++;
+    }
+
 
     delete[] p_10;
 
 
-*/
+
    //Point p_10[10];
+   
     return 0;
 }
 /***********************************
