@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 #include "List"
 
 using namespace std;
@@ -8,8 +9,11 @@ int ticket_service();
 void add_train();
 void delete_train();
 void print_trains();
+void searchAvailbleTrains(string, string);
+int computeCost(char, int, int);
 
 
+map<string, int> stations_map;
 
 
 class Train {
@@ -17,20 +21,25 @@ class Train {
 		int train_id;
 		int capacity;
 		int occupied;
-		const string stations[10];
+		char type;
+		int cost;
+
 		
 
 	public:
 		Train();
 		~Train();
 		virtual void showTrainInfo() = 0;
-		virtual int getCost(string, string) = 0;
+		virtual int getCost(int, int) = 0;
 		int getTrainId();
 		int getCapacity();
 		int getOccupied();
 		void setTrainId(int);
 		void setCapacity(int);
 		void setOccupied(int);
+		char getType();
+		int printCost();
+		//void setType(char);
 		//void setStations();
 };
 
@@ -40,7 +49,9 @@ Train::Train() {
 Train::~Train() {
 	
 }
-
+int Train::printCost() {
+	return cost;
+}
 
 int Train::getTrainId(){
 	return train_id;
@@ -64,6 +75,14 @@ void Train::setOccupied(int occ){
 	occupied = occ;
 
 }
+char Train::getType() {
+	return type;
+}
+/*
+void setType(char t) {
+	type = t;
+}
+*/
 
 class List {
 private:
@@ -81,6 +100,7 @@ public:
 	void addNode(Train*);
 	void deleteNode(int);
 	void printList();
+	Train* searchList(char);
 };
 List::List() {
 	head = NULL;
@@ -134,60 +154,112 @@ void List::printList() {
 	}
 }
 
+Train* List::searchList(char type) {
+	curr = head;
+
+	while (curr != NULL) {
+		//return curr->train->getType();
+		
+		if(curr->train->getType() == type) {
+				return curr->train;
+			
+		}
+		curr = curr->next;
+	}
+	return 0;
+}
+
 List trains_list;
 
 
 class N: public Train {
-
 	public:
-		void showTrainInfo() {
-			getTrainId();
-			getCapacity();
-			getOccupied();
-		}
-		int getCost(string orig, string dest) {
-			return 1;
-		}
-		void setStations() {
-			
-		}
+		void showTrainInfo();
+		int getCost(int, int);
+		void setType(char);
+	
 };
+
+int N::getCost(int orig_int, int dest_int){
+	int cost;
+	cost = (dest_int - orig_int) * 3;
+
+	return cost;
+}
+
+void N::showTrainInfo() {
+		getTrainId();
+		getType();
+			
+}
+void N::setType(char t){
+	type = t;
+}
 
 class A: public Train {
 
 	public:
-		void showTrainInfo() {
-			getTrainId();
-			getCapacity();
-			getOccupied();
-		}
-		int getCost(string orig, string dest) {
-			return 1;
-		}
+		void showTrainInfo();
+		int getCost(int, int);
+		void setType(char);
 
 };
+int A::getCost(int orig_int, int dest_int){
+	int cost;
+	cost = ((((dest_int - orig_int)/2)*3) + ((dest_int - orig_int)/2));
+
+	return cost;
+}
+void A::showTrainInfo() {
+		getTrainId();
+		getType();
+			
+}
+void A::setType(char t){
+	type = t;
+}
 class B: public Train {
 		public:
-		void showTrainInfo() {
-			getTrainId();
-			getCapacity();
-			getOccupied();
-		}
-		int getCost(string orig, string dest) {
-			return 1;
-		}
+		void showTrainInfo();
+		int getCost(int, int);
+		void setType(char);
 };
+int B::getCost(int orig_int, int dest_int){
+	int cost;
+	cost = ((((dest_int - orig_int)/2)*3) + ((dest_int - orig_int)/2));
+
+	return cost;
+}
+
+void B::showTrainInfo() {
+		getTrainId();
+		getType();
+			
+}
+void B::setType(char t){
+	type = t;
+}
 class S: public Train {
 		public:
-		void showTrainInfo() {
-			getTrainId();
-			getCapacity();
-			getOccupied();
-		}
-		int getCost(string orig, string dest) {
-			return 1;
-		}
+		void showTrainInfo();
+		int getCost(int, int);
+		void setType(char);
+
 };
+int S::getCost(int orig_int, int dest_int){
+	int cost;
+	cost = (((dest_int-orig_int-6)*3) + 6);
+
+	return cost;
+}
+void S::showTrainInfo() {
+		getTrainId();
+		getType();
+			
+}
+void S::setType(char t){
+	type = t;
+}
 
 class Ticket {
 	string origin;
@@ -202,6 +274,21 @@ Ticket::Ticket() {
 
 }
 Ticket::~Ticket() {
+
+}
+/*************************
+Ticket Buying
+*************************/
+void buy_tickets() {
+	Ticket t;
+	string orig, dest;
+
+	cout << "Origin: " << endl;
+	cin >> orig;
+	cout << "Destination: " << endl;
+	cin >> dest;
+
+	searchAvailbleTrains(orig, dest);
 
 }
 
@@ -223,6 +310,7 @@ void add_train() {
 		n1->setTrainId(new_train_id);
 		n1->setCapacity(new_capacity);
 		n1->setOccupied(0);
+		n1->setType('N');
 		trains_list.addNode(n1);
 	} else if (new_type == 'A' || new_type == 'a') {
 		A* a1;
@@ -230,6 +318,7 @@ void add_train() {
 		a1->setTrainId(new_train_id);
 		a1->setCapacity(new_capacity);
 		a1->setOccupied(0);
+		a1->setType('A');
 		trains_list.addNode(a1);
 	} else if (new_type == 'B' || new_type == 'b') {
 		B* b1;
@@ -237,6 +326,7 @@ void add_train() {
 		b1->setTrainId(new_train_id);
 		b1->setCapacity(new_capacity);
 		b1->setOccupied(0);
+		b1->setType('B');
 		trains_list.addNode(b1);
 	} else if (new_type == 'S' || new_type == 's') {
 		S* s1;
@@ -244,6 +334,7 @@ void add_train() {
 		s1->setTrainId(new_train_id);
 		s1->setCapacity(new_capacity);
 		s1->setOccupied(0);
+		s1->setType('S');
 		trains_list.addNode(s1);
 	} else {
 		cout << "not a train" << endl;
@@ -265,17 +356,8 @@ void print_trains() {
 	trains_list.printList();
 
 }
-Ticket buy_tickets() {
-	Ticket t;
-	string orig, dest;
 
-	cout << "Origin: " << endl;
-	cin >> orig;
-	cout << "Destination: " << endl;
-	cin >> dest;
 
-	return t;
-}
 int get_input_and_check (int choices) {
 	int err;
 	//cin >> choice;
@@ -296,8 +378,6 @@ int get_input_and_check (int choices) {
 	return err;
 }
 int main () {
-//	int err;
-	
 
 	while(1) {	
 		do {
@@ -357,14 +437,179 @@ int ticket_service() {
                         cout << "1. Buy Tickets" << endl;
                         cout << "2. Back" << endl;
                 }while(get_input_and_check(2));
-                cout << "reached end of program 3" << endl;
 
                 if (choice == 1) {
-                        cout << "1" << endl;
                         buy_tickets();
                 } else
                         break;
         }      
-        return 0;
+    return 0;
 }
+
+void searchAvailbleTrains(string orig, string dest) {
+	int orig_int, dest_int, dist_int;
+	char type;
+	int chosen_train_id;
+	Train *chosen_train;
+
+	stations_map["1A"] = 1;
+	stations_map["1B"] = 2;
+	stations_map["2A"] = 3;
+	stations_map["2B"] = 4;
+	stations_map["3A"] = 5;
+	stations_map["3B"] = 6;
+	stations_map["4A"] = 7;
+	stations_map["4B"] = 8;
+	stations_map["5A"] = 9;
+	stations_map["5B"] = 10;
+
+	orig_int = stations_map[orig];
+	dest_int = stations_map[dest];
+
+
+	dist_int = dest_int - orig_int;
+	if(((dist_int % 2) == 0) && (dist_int < 7)) {
+		if((orig_int % 2) == 0 ){
+			type = 'B';
+			chosen_train = trains_list.searchList(type);
+			chosen_train->getCost(orig_int, dest_int);
+			if(chosen_train->getTrainId() == 0){
+				type = 'N';
+				chosen_train = trains_list.searchList(type);
+				chosen_train->getCost(orig_int, dest_int);
+				if(chosen_train->getTrainId() == 0){
+					cout << "no train" << endl;
+				} else {
+					cout << "N" << endl;
+					cout << "Train ID: " << chosen_train->getTrainId() << endl;
+					cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+				}
+			}else {
+
+				cout << "B" << endl;
+				cout << "Train ID: " << chosen_train->getTrainId() << endl;
+				cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+			}
+		} else {
+			type = 'A';
+			chosen_train = trains_list.searchList(type);
+			chosen_train->getCost(orig_int, dest_int);
+
+			if(chosen_train->getTrainId() == 0){
+				type = 'N';
+				chosen_train = trains_list.searchList(type);
+				chosen_train->getCost(orig_int, dest_int);
+				if(chosen_train->getTrainId() == 0){
+					cout << "no train" << endl;
+				} else {
+					cout << "N" << endl;
+					cout << "Train ID: " << chosen_train->getTrainId() << endl;
+					cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+				}
+			}else {
+				cout << "A" << endl;
+				cout << "Train ID: " << chosen_train->getTrainId() << endl;
+				cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+			}
+		}
+
+	}else if(((dist_int % 2) != 0) && (dist_int <= 7)){
+		type = 'N';
+		chosen_train = trains_list.searchList(type);
+		chosen_train->getCost(orig_int, dest_int);
+		if(chosen_train->getTrainId() == 0){
+			cout << "no train" << endl;
+		} else {
+			cout << "N" << endl;
+			cout << "Train ID: " << chosen_train->getTrainId() << endl;
+			cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+		}
+
+	} else {
+		type = 'S';
+		chosen_train = trains_list.searchList(type);
+		chosen_train->getCost(orig_int, dest_int);
+		if(chosen_train->getTrainId() == 0) {
+			if((orig_int % 2 ==0) && (dest_int % 2 ==0)) {
+				type = 'B';
+				chosen_train = trains_list.searchList(type);
+				chosen_train->getCost(orig_int, dest_int);
+				if(chosen_train->getTrainId() == 0){
+					type = 'N';
+					chosen_train = trains_list.searchList(type);
+					chosen_train->getCost(orig_int, dest_int);
+					if(chosen_train->getTrainId() == 0){
+						cout << "no train" << endl;
+					}else {
+						cout << "N" << endl;
+						cout << "Train ID: " << chosen_train->getTrainId() << endl;
+						cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+					}
+				}else{
+					cout << "B" << endl;
+					cout << "Train ID: " << chosen_train->getTrainId() << endl;
+					cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+				}
+			} else if ((orig_int % 2 !=0) && (dest_int % 2 !=0)){
+				type = 'A';
+				chosen_train = trains_list.searchList(type);
+				chosen_train->getCost(orig_int, dest_int);
+				if(chosen_train->getTrainId() == 0){
+					type = 'N';
+					chosen_train = trains_list.searchList(type);
+					chosen_train->getCost(orig_int, dest_int);
+					if(chosen_train->getTrainId() == 0){
+						cout << "no train" << endl;
+					}else {
+						cout << "N" << endl;
+						cout << "Train ID: " << chosen_train->getTrainId() << endl;
+						cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+					}
+				}else{
+					cout << "A" << endl;
+					cout << "Train ID: " << chosen_train->getTrainId() << endl;
+					cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+				}
+			} else {
+				type = 'N';
+				chosen_train = trains_list.searchList(type);
+				chosen_train->getCost(orig_int, dest_int);
+				if(chosen_train->getTrainId() == 0){
+					cout << "no train" << endl;
+				}else{
+					cout << "N" << endl;
+					cout << "Train ID: " << chosen_train->getTrainId() << endl;
+					cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+				}
+			}
+		} else {
+			cout << "S" << endl;
+			cout << "Train ID: " << chosen_train->getTrainId() << endl;
+			cout << "Cost: " << chosen_train->getCost(orig_int, dest_int) << endl;
+		}
+		
+	}
+
+
+	//cout << trains_list.searchList(type) << endl;
+
+}
+/*
+int computeCost(char type, int orig_int, int dest_int) {
+	int cost;
+
+
+	if(type == 'N') {
+		cost = (dest_int - orig_int) * 3;
+	} else if((type == 'A') || (type == 'B')) {
+		cost = ((((dest_int - orig_int)/2)*3) + ((dest_int - orig_int)/2));
+	} else {
+		cost = (((dest_int-orig_int-6)*3) + 6);
+	}
+	return cost;
+
+}
+*/
+
+
 
